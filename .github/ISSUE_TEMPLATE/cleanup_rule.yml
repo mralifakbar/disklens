@@ -1,0 +1,35 @@
+name: Suggest a cleanup rule
+description: A cache or build folder DiskLens should recognize.
+labels: [cleanup-rule]
+body:
+  - type: input
+    id: tool
+    attributes:
+      label: Tool
+      placeholder: Deno, Unity, Bazel, ...
+    validations:
+      required: true
+  - type: textarea
+    id: paths
+    attributes:
+      label: Path(s)
+      description: Relative to your home folder.
+      placeholder: Library/Caches/deno
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: What happens after it's deleted?
+      description: Does the tool rebuild or download it again on its own? Can anything be lost?
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Official cleanup command, if there is one
+      placeholder: deno clean
+  - type: input
+    id: size
+    attributes:
+      label: How big does it get for you?

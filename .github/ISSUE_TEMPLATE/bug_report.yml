@@ -1,0 +1,47 @@
+name: Bug report
+description: Something doesn't work or shows the wrong numbers.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what you got instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open DiskLens and approve the admin prompt
+        2. Open ~/Library
+        3. ...
+  - type: input
+    id: version
+    attributes:
+      label: DiskLens version
+      description: About DiskLens in the app menu, or `DiskLens --version`.
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and Mac
+      placeholder: macOS 15.5, MacBook Pro M3
+    validations:
+      required: true
+  - type: dropdown
+    id: access
+    attributes:
+      label: Access
+      options:
+        - Admin access, with Full Disk Access
+        - Admin access, without Full Disk Access
+        - Limited access (admin prompt cancelled)
+        - Not sure
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots help, but please blur folder names you'd rather not share, or reproduce it with `--demo`.
