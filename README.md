@@ -169,6 +169,13 @@ Use `--demo` to work on the UI without scanning your disk, and `DISKLENS_NO_ADMI
 to skip the password prompt. [CONTRIBUTING.md](CONTRIBUTING.md) lists every
 development switch, including the one that renders the README screenshots.
 
+## Inspiration
+
+DiskLens started after I saw [this post by @jayypatel18](https://x.com/jayypatel18/status/2110433209909743939):
+Claude mapped a full Mac disk, found 97 GB of junk and built a cleanup UI for it.
+The layout of this app (stat cards, treemap explorer, recommendations with a cleanup
+script) comes from that screenshot. Thanks for the idea!
+
 ## Contributing
 
 Bug reports, new cleanup rules and pull requests are welcome. Start with
