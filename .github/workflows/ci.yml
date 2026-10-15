@@ -34,7 +34,7 @@ jobs:
           build/DiskLens.app/Contents/MacOS/DiskLens --version
           codesign --verify --strict build/DiskLens.app
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: DiskLens-app
           path: build/DiskLens-*.zip
