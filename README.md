@@ -73,10 +73,11 @@ cd disklens
 ./build.sh --install      # builds build/DiskLens.app and copies it to /Applications
 ```
 
-`./build.sh --universal --zip` builds what releases ship: an arm64 + x86_64 app and a zip.
-Local builds are signed ad-hoc. Set `DISKLENS_SIGN_IDENTITY="Developer ID Application: …"`
-to sign with your own certificate, then `scripts/notarize.sh build/DiskLens.app` notarizes
-it the way releases are.
+`./build.sh --universal --zip` builds what releases ship: an arm64 + x86_64 app and
+a zip. Local builds are signed ad-hoc. Set `DISKLENS_SIGN_IDENTITY="Apple Development: …"`
+to sign with your own certificate, so macOS remembers Full Disk Access across
+rebuilds. With a `Developer ID Application` certificate,
+`scripts/notarize.sh build/DiskLens.app` notarizes the result the way releases are.
 
 ## Usage
 
