@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-03
+
+### Changed
+
+- Releases are signed with a Developer ID and notarized by Apple, so macOS opens
+  DiskLens without a warning. Coming from 0.1.0, which was signed ad-hoc, grant Full
+  Disk Access again if you had turned it on.
+- The app runs with the hardened runtime. `DISKLENS_SIGN_IDENTITY` signs local builds
+  with your own certificate, and `scripts/notarize.sh` notarizes them.
+
 ## [0.1.0] - 2026-10-15
 
 First public release.
@@ -25,5 +35,6 @@ First public release.
 - Copy a reviewed cleanup script, or move selected items to the Trash.
 - `--demo` mode with sample data, and `--scan` for a summary in the terminal.
 
-[Unreleased]: https://github.com/mralifakbar/disklens/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/mralifakbar/disklens/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/mralifakbar/disklens/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/mralifakbar/disklens/releases/tag/v0.1.0

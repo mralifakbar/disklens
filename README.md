@@ -58,13 +58,10 @@ deleted behind your back.
 ### Download
 
 1. Grab `DiskLens-x.y.z.zip` from the [latest release](https://github.com/mralifakbar/disklens/releases/latest).
-2. Unzip it and move **DiskLens.app** to `/Applications`.
-3. The app is ad-hoc signed, not notarized, so the first time macOS will block it.
-   Right-click the app and choose **Open**, or run:
+2. Unzip it, move **DiskLens.app** to `/Applications` and open it.
 
-   ```sh
-   xattr -dr com.apple.quarantine /Applications/DiskLens.app
-   ```
+Releases are signed with a Developer ID and notarized by Apple, so macOS opens them
+without a warning.
 
 ### Build from source
 
@@ -77,6 +74,9 @@ cd disklens
 ```
 
 `./build.sh --universal --zip` builds what releases ship: an arm64 + x86_64 app and a zip.
+Local builds are signed ad-hoc. Set `DISKLENS_SIGN_IDENTITY="Developer ID Application: …"`
+to sign with your own certificate, then `scripts/notarize.sh build/DiskLens.app` notarizes
+it the way releases are.
 
 ## Usage
 

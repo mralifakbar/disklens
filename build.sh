@@ -7,6 +7,9 @@
 #   ./build.sh --install     also copy the app to /Applications
 #
 # The version comes from $VERSION, else the latest git tag, else 0.1.0.
+# Set DISKLENS_SIGN_IDENTITY (e.g. "Developer ID Application: …") to sign with a
+# real certificate instead of ad-hoc. Releases are then notarized with
+# scripts/notarize.sh.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -44,9 +47,12 @@ if [ ! -f build/AppIcon.icns ]; then
 fi
 cp build/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 
-# Ad-hoc signature: enough to run locally, not notarized.
-codesign --force --sign - "$APP"
-echo "Built $APP $VERSION ($(lipo -archs "$APP/Contents/MacOS/DiskLens"), $(du -sh "$APP" | cut -f1))"
+IDENTITY="${DISKLENS_SIGN_IDENTITY:--}"
+SIGN=(--force --options runtime --entitlements Resources/DiskLens.entitlements --sign "$IDENTITY")
+# Notarization needs a secure timestamp; ad-hoc signatures can't have one.
+[ "$IDENTITY" = "-" ] || SIGN+=(--timestamp)
+codesign "${SIGN[@]}" "$APP"
+echo "Built $APP $VERSION ($(lipo -archs "$APP/Contents/MacOS/DiskLens"), $(du -sh "$APP" | cut -f1), signed: $IDENTITY)"
 
 if [ "$ZIP" = 1 ]; then
     rm -f "build/DiskLens-$VERSION.zip"
