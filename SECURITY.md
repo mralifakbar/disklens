@@ -42,5 +42,6 @@ Every cleanup (Trash, scripts) runs as **you**, never as root.
   narrow window during startup, open the request FIFO before the app does. It would
   then get folder names and sizes, never file contents. Anything running as your
   user can do a lot worse already, so this isn't treated as a boundary.
-- **Release builds are ad-hoc signed and not notarized.** Check the SHA-256 on the
-  release page, or build from source.
+- **Release builds are signed with a Developer ID (team 5583X832TP) and notarized by
+  Apple.** Run `codesign -dv` on the app to see the team, and check the SHA-256 on the
+  release page.
