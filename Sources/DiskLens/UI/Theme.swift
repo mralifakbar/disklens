@@ -1,23 +1,52 @@
 import SwiftUI
 
-import SwiftUI
+/// Every color, size and surface the UI uses. Matches Panefold: soft cards on the
+/// window background, system fonts, accent color for selection and primary actions.
+enum Theme {
+    static let radius: CGFloat = 12
+    static let tileRadius: CGFloat = 6
+    static let padding: CGFloat = 14
+    static let gap: CGFloat = 14
+    static let pagePadding: CGFloat = 20
+
+    /// Big numbers: the stats row and the sizes drawn in treemap tiles.
+    static func number(_ size: CGFloat, weight: Font.Weight = .semibold) -> Font {
+        .system(size: size, weight: weight, design: .rounded).monospacedDigit()
+    }
+}
 
 extension Color {
     static let page = Color(nsColor: .windowBackgroundColor)
-    static let card = Color(nsColor: .controlBackgroundColor)
-    static let hairline = Color.primary.opacity(0.1)
+    /// The soft card fill, drawn over the window background.
+    static let cardFill = Color.primary.opacity(0.04)
+    static let rowHover = Color.primary.opacity(0.05)
 }
 
 private struct CardStyle: ViewModifier {
+    var padding: CGFloat?
+
     func body(content: Content) -> some View {
         content
-            .background(Color.card, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(Color.hairline))
+            .padding(padding ?? 0)
+            .background(RoundedRectangle(cornerRadius: Theme.radius, style: .continuous).fill(Color.cardFill))
     }
 }
 
 extension View {
-    func card() -> some View { modifier(CardStyle()) }
+    /// Panefold's grouped card: a soft fill, no border, no shadow.
+    func card(padding: CGFloat? = nil) -> some View { modifier(CardStyle(padding: padding)) }
+
+    /// An opaque card-colored background, for headers pinned over scrolling card content.
+    func cardSurface() -> some View { background(Color.cardFill).background(Color.page) }
+
+    /// A small tinted capsule, like Panefold's tile badges.
+    func badge(_ tint: Color) -> some View {
+        font(.caption2.bold())
+            .foregroundStyle(tint)
+            .padding(.horizontal, 7)
+            .padding(.vertical, 2)
+            .background(tint.opacity(0.14), in: Capsule())
+    }
 }
 
 extension FileCategory {
@@ -37,8 +66,8 @@ extension FileCategory {
 extension Safety {
     var color: Color {
         switch self {
-        case .safe: Color(red: 0.20, green: 0.64, blue: 0.33)
-        case .review: Color(red: 0.93, green: 0.55, blue: 0.13)
+        case .safe: .green
+        case .review: .orange
         }
     }
 }

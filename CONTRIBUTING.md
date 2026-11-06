@@ -37,7 +37,7 @@ build.sh               builds, signs (ad hoc) and packages the .app
 |---|---|
 | `DiskLens --demo` or `DISKLENS_DEMO=1` | Sample data. Nothing on your disk is read or touched. |
 | `DISKLENS_NO_ADMIN=1` | Skip the password prompt and scan as yourself. |
-| `DISKLENS_OPEN=~` (or a path) | Open that folder once the scan finishes. |
+| `DISKLENS_OPEN='~'` (or a path) | Open that folder once the scan finishes. |
 | `DISKLENS_MODE=cleanup` | Start in the Cleanup view. |
 | `DISKLENS_SNAPSHOT=/tmp/shot.png` | Save the window to a PNG, then quit. |
 | `DiskLens --scan` | Print a disk summary and the recommendations, no window. |
@@ -46,8 +46,8 @@ The README screenshots are made like this:
 
 ```sh
 A=build/DiskLens.app/Contents/MacOS/DiskLens
-DISKLENS_DEMO=1 DISKLENS_OPEN=~ DISKLENS_SNAPSHOT=$PWD/docs/screenshot-light.png $A -NSRequiresAquaSystemAppearance YES
-DISKLENS_DEMO=1 DISKLENS_OPEN=~ DISKLENS_MODE=cleanup DISKLENS_SNAPSHOT=$PWD/docs/screenshot-cleanup-dark.png $A
+DISKLENS_DEMO=1 DISKLENS_OPEN='~' DISKLENS_SNAPSHOT=$PWD/docs/screenshot-light.png $A -NSRequiresAquaSystemAppearance YES
+DISKLENS_DEMO=1 DISKLENS_OPEN='~' DISKLENS_MODE=cleanup DISKLENS_SNAPSHOT=$PWD/docs/screenshot-cleanup-dark.png $A
 DISKLENS_DEMO=1 DISKLENS_SNAPSHOT=$PWD/docs/screenshot-disk.png $A -NSRequiresAquaSystemAppearance YES
 ```
 

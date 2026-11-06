@@ -4,14 +4,14 @@ struct ContentView: View {
     @EnvironmentObject var model: AppModel
 
     var body: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: Theme.gap + 4) {
             StatsRow()
-            HStack(alignment: .top, spacing: 14) {
+            HStack(alignment: .top, spacing: Theme.gap + 4) {
                 ExplorerCard()
                 RecommendationsCard().frame(width: 390)
             }
         }
-        .padding(18)
+        .padding(Theme.pagePadding)
         .background(Color.page)
         .overlay(alignment: .bottom) {
             if let toast = model.toast {

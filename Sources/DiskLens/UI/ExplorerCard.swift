@@ -5,23 +5,17 @@ struct ExplorerCard: View {
     @State private var hovered: Node?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 3) {
-                    Text("Explorer").font(.system(size: 15, weight: .semibold))
-                    Text("Your whole disk, sized by space used. Click a tile to open it.")
-                        .font(.system(size: 12)).foregroundStyle(.secondary)
-                }
-                Spacer()
+        VStack(alignment: .leading, spacing: 10) {
+            CardHeader(title: "Explorer", subtitle: "Your whole disk, sized by space used. Click a tile to open it.") {
                 if model.phase == .ready { AccessBadge() }
                 if model.mapIsStale {
-                    Text("Map is out of date")
-                        .font(.system(size: 11.5)).foregroundStyle(Safety.review.color)
+                    Text("Map is out of date").badge(Safety.review.color)
                 }
                 Button { model.scan() } label: {
                     Image(systemName: "arrow.clockwise")
                 }
                 .buttonStyle(.borderless)
+                .foregroundStyle(Color.accentColor)
                 .disabled(model.phase == .scanning)
                 .help("Rescan (⌘R)")
                 Picker("", selection: $model.mode) {
@@ -32,48 +26,47 @@ struct ExplorerCard: View {
                 .labelsHidden()
                 .frame(width: 170)
             }
-            .padding(16)
 
-            Divider()
-
-            switch model.phase {
-            case .ready:
-                if let node = model.current {
-                    if model.unreadable > 0 { UnreadableNotice() }
-                    breadcrumb(node)
-                    TreemapView(
-                        node: node, mode: model.mode, recIndex: model.recIndex, version: model.treeVersion,
-                        hovered: $hovered,
-                        onOpen: { model.open($0) },
-                        onReveal: { model.reveal([$0.path]) }
-                    )
-                    .id(node.path)
-                    .padding(.horizontal, 10)
-                    .overlay {
-                        if model.loading {
-                            ProgressView().controlSize(.small)
-                                .padding(10)
-                                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
-                        } else if node.children?.isEmpty == true {
-                            Text("Empty folder").foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 10) {
+                switch model.phase {
+                case .ready:
+                    if let node = model.current {
+                        if model.unreadable > 0 { UnreadableNotice() }
+                        breadcrumb(node)
+                        TreemapView(
+                            node: node, mode: model.mode, recIndex: model.recIndex, version: model.treeVersion,
+                            hovered: $hovered,
+                            onOpen: { model.open($0) },
+                            onReveal: { model.reveal([$0.path]) }
+                        )
+                        .id(node.path)
+                        .overlay {
+                            if model.loading {
+                                ProgressView().controlSize(.small)
+                                    .padding(10)
+                                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
+                            } else if node.children?.isEmpty == true {
+                                Text("Empty folder").foregroundStyle(.secondary)
+                            }
                         }
+                        legend
                     }
-                    legend.padding(16)
+                default:
+                    ScanningView()
                 }
-            default:
-                ScanningView()
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .card(padding: Theme.padding)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .card()
         .onExitCommand { model.goUp() }
     }
 
     private func breadcrumb(_ node: Node) -> some View {
         HStack(spacing: 5) {
-            Button { model.goHome() } label: { Image(systemName: "house") }
+            Button { model.goHome() } label: { Image(systemName: "house.fill") }
                 .buttonStyle(.plain)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.accentColor)
                 .help("Jump to your home folder")
                 .padding(.trailing, 4)
             ForEach(Array(model.stack.enumerated()), id: \.offset) { i, n in
@@ -84,6 +77,7 @@ struct ExplorerCard: View {
                 }
                 Button(n.name) { model.go(to: i) }
                     .buttonStyle(.plain)
+                    .fontWeight(i == model.stack.count - 1 ? .semibold : .regular)
                     .foregroundStyle(i == model.stack.count - 1 ? .primary : .secondary)
             }
             Spacer(minLength: 16)
@@ -91,14 +85,12 @@ struct ExplorerCard: View {
                 Text(h.isAggregate || h.isVirtual ? h.name : Fmt.tilde(h.path))
                     .lineLimit(1).truncationMode(.middle)
                     .foregroundStyle(.secondary)
-                Text(Fmt.size(h.size)).fontWeight(.medium)
+                Text(Fmt.size(h.size)).fontWeight(.semibold)
             } else {
                 Text(Fmt.size(node.size)).foregroundStyle(.secondary)
             }
         }
-        .font(.system(size: 12.5, design: .monospaced))
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .font(.callout.monospacedDigit())
     }
 
     @ViewBuilder private var legend: some View {
@@ -124,25 +116,25 @@ private struct ScanningView: View {
     var body: some View {
         VStack(spacing: 12) {
             ProgressView().controlSize(.regular)
-            Text(model.statusText).font(.system(size: 15, weight: .medium))
+            Text(model.statusText).font(.title3.weight(.semibold))
             Text("\(model.progressFiles.formatted()) files · \(Fmt.size(model.progressBytes))")
-                .font(.system(size: 12.5, design: .monospaced))
+                .font(.callout.monospacedDigit())
                 .foregroundStyle(.secondary)
                 .contentTransition(.numericText())
             Text(model.progressPath)
-                .font(.system(size: 11, design: .monospaced))
+                .font(.caption)
                 .foregroundStyle(.tertiary)
                 .lineLimit(1).truncationMode(.middle)
                 .frame(maxWidth: 420)
             VStack(spacing: 4) {
                 Text("Administrator access lets DiskLens measure system folders. macOS privacy-protected folders (Mail, Messages, other apps' data) also need Full Disk Access.")
-                    .font(.system(size: 12)).foregroundStyle(.secondary)
+                    .font(.caption).foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                 Button("Open Privacy Settings") {
                     NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")!)
                 }
                 .buttonStyle(.link)
-                .font(.system(size: 12))
+                .font(.caption)
             }
             .frame(maxWidth: 380)
             .padding(.top, 10)
@@ -157,16 +149,14 @@ private struct AccessBadge: View {
     var body: some View {
         if model.isRoot {
             Label("Admin access", systemImage: "lock.open.fill")
-                .font(.system(size: 11.5, weight: .medium))
-                .foregroundStyle(Safety.safe.color)
+                .badge(Safety.safe.color)
                 .help("Scanned as root through the DiskLens helper.")
         } else {
             Button { model.scan(elevate: true) } label: {
                 Label("Limited access · Scan as admin", systemImage: "lock.fill")
-                    .font(.system(size: 11.5, weight: .medium))
+                    .badge(Safety.review.color)
             }
             .buttonStyle(.plain)
-            .foregroundStyle(Safety.review.color)
             .help("Rescan with administrator privileges to include system folders.")
         }
     }
@@ -191,7 +181,7 @@ private struct UnreadableNotice: View {
                                 Text("and \(model.unreadable - model.unreadableSamples.count) more").foregroundStyle(.tertiary)
                             }
                         }
-                        .font(.system(size: 11, design: .monospaced))
+                        .font(.caption)
                         .textSelection(.enabled)
                         .padding(12)
                     }
@@ -203,9 +193,9 @@ private struct UnreadableNotice: View {
             }
             .buttonStyle(.link)
         }
-        .font(.system(size: 11.5))
-        .padding(.horizontal, 16)
+        .font(.caption)
+        .padding(.horizontal, 10)
         .padding(.vertical, 7)
-        .background(Safety.review.color.opacity(0.07))
+        .background(RoundedRectangle(cornerRadius: 8, style: .continuous).fill(Safety.review.color.opacity(0.1)))
     }
 }

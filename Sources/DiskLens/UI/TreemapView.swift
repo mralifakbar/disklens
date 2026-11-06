@@ -52,17 +52,20 @@ struct TreemapView: View {
         let status = recIndex.status(t.node.path)
         let isHovered = hovered?.path == t.node.path
         let base: Color = mode == .category ? t.node.category.color : (status?.color ?? .gray)
-        let shape = Path(roundedRect: t.rect, cornerRadius: t.depth == 0 ? 7 : 5, style: .continuous)
+        let shape = Path(roundedRect: t.rect, cornerRadius: t.depth == 0 ? Theme.tileRadius + 2 : Theme.tileRadius, style: .continuous)
 
         let fill: Double
         switch mode {
-        case .category: fill = t.depth == 0 ? (t.hasInner ? 0.10 : 0.17) : 0.20
+        case .category: fill = t.depth == 0 ? (t.hasInner ? 0.10 : 0.20) : 0.24
         case .cleanup: fill = status == nil ? (t.depth == 0 ? 0.05 : 0.09) : 0.20
         }
         ctx.fill(shape, with: .color(base.opacity(fill)))
         if let status { hatch(shape, rect: t.rect, color: status.color, in: ctx) }
-        let strokeColor = status?.color ?? base
-        ctx.stroke(shape, with: .color(strokeColor.opacity(isHovered ? 0.95 : 0.5)), lineWidth: isHovered ? 2 : 1)
+        if isHovered {
+            ctx.stroke(shape, with: .color(.accentColor), lineWidth: 2)
+        } else {
+            ctx.stroke(shape, with: .color((status?.color ?? base).opacity(0.28)), lineWidth: 1)
+        }
 
         let r = t.rect
         if t.depth == 0 {
@@ -75,7 +78,7 @@ struct TreemapView: View {
                 )
                 if showSize {
                     ctx.draw(
-                        Text(Fmt.size(t.node.size)).font(.system(size: 11, design: .monospaced)).foregroundColor(.secondary),
+                        Text(Fmt.size(t.node.size)).font(.caption.monospacedDigit()).foregroundColor(.secondary),
                         at: CGPoint(x: r.maxX - 8, y: r.minY + 7), anchor: .topTrailing
                     )
                 }
@@ -106,7 +109,7 @@ struct TreemapView: View {
         let text = Fmt.size(size)
         guard CGFloat(text.count) * fontSize * 0.62 < r.width - 12 else { return }
         ctx.draw(
-            Text(text).font(.system(size: fontSize, weight: .semibold, design: .monospaced)).foregroundColor(.primary),
+            Text(text).font(Theme.number(fontSize, weight: .bold)).foregroundColor(.primary),
             at: CGPoint(x: r.minX + 7, y: r.maxY - 6), anchor: .bottomLeading
         )
     }
